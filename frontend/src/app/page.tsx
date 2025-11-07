@@ -11,6 +11,8 @@ import HistoryPanel from '@/components/HistoryPanel'
 import AlertsPanel from '@/components/AlertsPanel'
 import StatisticsPanel from '@/components/StatisticsPanel'
 import ConnectionError from '@/components/ConnectionError'
+import LegalFooter from '@/components/LegalFooter'
+import SubFooter from '@/components/SubFooter'
 
 interface ApiTrade {
   ticket: number
@@ -358,7 +360,7 @@ ${implementationGuide}
             {/* Input Panel */}
             <Card className="bg-zinc-900 border-zinc-800 hover:border-orange-500/50 transition-all duration-300 card-hover">
             <CardHeader>
-              <CardTitle className="text-white font-heading">MT5 Analysis</CardTitle>
+              <CardTitle className="text-white font-semibold">MT5 Analysis</CardTitle>
               <CardDescription className="text-zinc-400">
                 Analyze your current MT5 account strategy. Make sure MT5 is open and connected.
               </CardDescription>
@@ -395,7 +397,7 @@ ${implementationGuide}
                       : 'bg-green-600/20 border-green-500/50 hover:bg-green-600/30 text-green-300 hover:text-green-200'
                   }`}
                 >
-                  Estadisticas y Control 
+                  Estadisticas y Analisis 
                 </Button>
 
                 <Button
@@ -434,7 +436,7 @@ ${implementationGuide}
                 <div id="strategy-detected" className="mb-6">
                   <Card className="bg-zinc-900 border-zinc-800 card-hover">
                     <CardHeader>
-                      <CardTitle className="text-white font-heading flex items-center gap-2">
+                      <CardTitle className="text-white font-semibold flex items-center gap-2">
                         <span className="text-orange-500">🎯</span>
                         Strategy Detected
                       </CardTitle>
@@ -509,7 +511,7 @@ ${implementationGuide}
                   <div className="mb-6">
                   <Card className="bg-zinc-900 border-zinc-800 card-hover">
                     <CardHeader>
-                      <CardTitle className="text-white font-heading flex items-center gap-2">
+                      <CardTitle className="text-white font-semibold flex items-center gap-2">
                         <span className="text-orange-500">💻</span>
                         Strategy Code Generator
                       </CardTitle>
@@ -582,7 +584,7 @@ ${implementationGuide}
                 <div className="mb-6">
                 <Card className="bg-zinc-900 border-zinc-800 card-hover">
                   <CardHeader>
-                    <CardTitle className="text-white font-heading flex items-center gap-2">
+                    <CardTitle className="text-white font-semibold flex items-center gap-2">
                       <span className="text-orange-500">📊</span>
                       Detailed Trades
                     </CardTitle>
@@ -658,14 +660,14 @@ ${implementationGuide}
               </div>
             )}
 
-            {/* Vista: Panel de Control */}
+            {/* Vista: Estadisticas y Analisis */}
             {activeView === 'control' && (
               <div id="control-section">
                 <Card className="bg-zinc-900 border-zinc-800 card-hover">
                   <CardHeader>
-                    <CardTitle className="text-white font-heading flex items-center gap-2">
+                    <CardTitle className="text-white font-semibold flex items-center gap-2">
                       <span className="text-green-500">🗄️</span>
-                      Panel de Control
+                      Estadisticas y Analisis
                     </CardTitle>
                     <CardDescription className="text-zinc-400">
                       Historial, alertas y estadísticas globales
@@ -699,6 +701,10 @@ ${implementationGuide}
           </div>
         )}
       </div>
+
+      {/* Footers */}
+      <LegalFooter />
+      <SubFooter />
     </div>
   )
 }

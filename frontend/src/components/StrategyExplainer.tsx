@@ -196,7 +196,7 @@ No te preocupes, ¡el código ya tiene todo esto incluido! 🎉`
   return (
     <Card className="bg-gradient-to-br from-purple-900 to-gray-900 border-purple-700">
       <CardHeader>
-        <CardTitle className="text-white text-2xl font-heading">{simpleExplanation.title}</CardTitle>
+        <CardTitle className="text-white text-2xl font-semibold">{simpleExplanation.title}</CardTitle>
         <CardDescription className="text-purple-200">
           Explicación paso a paso para que entiendas TODO sobre esta estrategia
         </CardDescription>
@@ -204,7 +204,7 @@ No te preocupes, ¡el código ya tiene todo esto incluido! 🎉`
       <CardContent className="space-y-6">
         {simpleExplanation.sections.map((section, index) => (
           <div key={index} className="bg-gray-800/50 rounded-lg p-4 border border-purple-600/30">
-            <h3 className="text-xl font-bold font-heading text-purple-300 mb-3">
+            <h3 className="text-xl font-semibold text-purple-300 mb-3">
               {section.emoji} {section.title}
             </h3>
             <div className="text-gray-200 whitespace-pre-line leading-relaxed">

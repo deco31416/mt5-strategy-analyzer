@@ -56,8 +56,8 @@ export default function NavigationMenu() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <Image 
-              src="/logo-alterhedge.png" 
-              alt="AlterHedge" 
+              src="/logo-HedgeBridge.png" 
+              alt="HedgeBridge" 
               width={32} 
               height={32}
               className="object-contain"
@@ -66,7 +66,7 @@ export default function NavigationMenu() {
               className="text-white font-semibold text-lg group-hover:text-accent transition-colors" 
               style={{fontFamily: "'Orbitron', sans-serif"}}
             >
-              AlterHedge
+              HedgeBridge
             </span>
           </Link>
 
