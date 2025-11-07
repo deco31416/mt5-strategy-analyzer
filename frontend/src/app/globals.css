@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Arbitrum-inspired Black + Orange Theme */
+    --background: 0 0% 4%; /* #0a0a0a - Deep Black */
+    --foreground: 0 0% 98%; /* #fafafa - Off White */
+    
+    --card: 0 0% 9%; /* #171717 - Card Background */
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 24 95% 53%; /* #f97316 - Vibrant Orange */
+    --primary-foreground: 0 0% 4%;
+    
+    --secondary: 0 0% 15%; /* #262626 - Dark Gray */
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 63%; /* #a1a1a1 - Muted Gray */
+    
+    --accent: 20 100% 65%; /* #ff8247 - Accent Orange */
+    --accent-foreground: 0 0% 4%;
+    
+    --destructive: 0 84% 60%; /* #ef4444 - Red for errors */
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 15%; /* #262626 - Subtle borders */
+    --input: 0 0% 15%;
+    --ring: 24 95% 53%; /* Orange ring */
+    
+    --radius: 0.75rem;
+    
+    --chart-1: 24 95% 53%;
+    --chart-2: 33 100% 50%;
+    --chart-3: 45 93% 47%;
+    --chart-4: 55 92% 45%;
+    --chart-5: 84 81% 44%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-black text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+    min-height: 100vh;
+  }
+  
+  /* Custom scrollbar - Black + Orange */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #171717;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #f97316;
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ff8247;
+  }
+}
+
+/* Card hover effect - Simplified */
+.card-hover {
+  transition: all 0.2s ease;
+  border: 1px solid rgba(249, 115, 22, 0.1);
+}
+
+.card-hover:hover {
+  border-color: rgba(249, 115, 22, 0.2);
+}
+

@@ -1,0 +1,8 @@
+MetaTrader5
+pandas
+fastapi
+uvicorn
+pymongo
+python-dotenv
+scikit-learn
+colorama
