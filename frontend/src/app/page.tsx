@@ -329,7 +329,7 @@ ${implementationGuide}
       <div className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-3xl font-bold font-heading">
               <span className="text-white">MT5</span>
               <span className="text-orange-500"> Strategy Analyzer</span>
               <span className="ml-3 text-orange-500">⚡</span>
@@ -358,7 +358,7 @@ ${implementationGuide}
             {/* Input Panel */}
             <Card className="bg-zinc-900 border-zinc-800 hover:border-orange-500/50 transition-all duration-300 card-hover">
             <CardHeader>
-              <CardTitle className="text-white">MT5 Analysis</CardTitle>
+              <CardTitle className="text-white font-heading">MT5 Analysis</CardTitle>
               <CardDescription className="text-zinc-400">
                 Analyze your current MT5 account strategy. Make sure MT5 is open and connected.
               </CardDescription>
@@ -383,31 +383,7 @@ ${implementationGuide}
                       : 'bg-orange-600/20 border-orange-500/50 hover:bg-orange-600/30 text-orange-300 hover:text-orange-200'
                   }`}
                 >
-                  📊 Ver Estrategia
-                </Button>
-
-                <Button
-                  onClick={() => setActiveView('guide')}
-                  variant="outline"
-                  className={`w-full transition-all duration-300 ${
-                    activeView === 'guide'
-                      ? 'bg-purple-600/40 border-purple-500 text-purple-200'
-                      : 'bg-purple-600/20 border-purple-500/50 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200'
-                  }`}
-                >
-                  📚 Guía Principiantes
-                </Button>
-                
-                <Button
-                  onClick={() => setActiveView('hyperliquid')}
-                  variant="outline"
-                  className={`w-full transition-all duration-300 ${
-                    activeView === 'hyperliquid'
-                      ? 'bg-cyan-600/40 border-cyan-500 text-cyan-200'
-                      : 'bg-cyan-600/20 border-cyan-500/50 hover:bg-cyan-600/30 text-cyan-300 hover:text-cyan-200'
-                  }`}
-                >
-                  🚀 Hyperliquid DEX
+                  Ver Estrategia
                 </Button>
 
                 <Button
@@ -419,7 +395,31 @@ ${implementationGuide}
                       : 'bg-green-600/20 border-green-500/50 hover:bg-green-600/30 text-green-300 hover:text-green-200'
                   }`}
                 >
-                  🗄️ Panel Control
+                  Estadisticas y Control 
+                </Button>
+
+                <Button
+                  onClick={() => setActiveView('guide')}
+                  variant="outline"
+                  className={`w-full transition-all duration-300 ${
+                    activeView === 'guide'
+                      ? 'bg-purple-600/40 border-purple-500 text-purple-200'
+                      : 'bg-purple-600/20 border-purple-500/50 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200'
+                  }`}
+                >
+                  Manual de la Estrategia
+                </Button>
+                
+                <Button
+                  onClick={() => setActiveView('hyperliquid')}
+                  variant="outline"
+                  className={`w-full transition-all duration-300 ${
+                    activeView === 'hyperliquid'
+                      ? 'bg-cyan-600/40 border-cyan-500 text-cyan-200'
+                      : 'bg-cyan-600/20 border-cyan-500/50 hover:bg-cyan-600/30 text-cyan-300 hover:text-cyan-200'
+                  }`}
+                >
+                  Estrategia en Hyperliquid
                 </Button>
               </div>
             </CardContent>
@@ -434,7 +434,7 @@ ${implementationGuide}
                 <div id="strategy-detected" className="mb-6">
                   <Card className="bg-zinc-900 border-zinc-800 card-hover">
                     <CardHeader>
-                      <CardTitle className="text-white flex items-center gap-2">
+                      <CardTitle className="text-white font-heading flex items-center gap-2">
                         <span className="text-orange-500">🎯</span>
                         Strategy Detected
                       </CardTitle>
@@ -509,7 +509,7 @@ ${implementationGuide}
                   <div className="mb-6">
                   <Card className="bg-zinc-900 border-zinc-800 card-hover">
                     <CardHeader>
-                      <CardTitle className="text-white flex items-center gap-2">
+                      <CardTitle className="text-white font-heading flex items-center gap-2">
                         <span className="text-orange-500">💻</span>
                         Strategy Code Generator
                       </CardTitle>
@@ -582,7 +582,7 @@ ${implementationGuide}
                 <div className="mb-6">
                 <Card className="bg-zinc-900 border-zinc-800 card-hover">
                   <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
+                    <CardTitle className="text-white font-heading flex items-center gap-2">
                       <span className="text-orange-500">📊</span>
                       Detailed Trades
                     </CardTitle>
@@ -663,7 +663,7 @@ ${implementationGuide}
               <div id="control-section">
                 <Card className="bg-zinc-900 border-zinc-800 card-hover">
                   <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
+                    <CardTitle className="text-white font-heading flex items-center gap-2">
                       <span className="text-green-500">🗄️</span>
                       Panel de Control
                     </CardTitle>

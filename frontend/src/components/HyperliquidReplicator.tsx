@@ -46,7 +46,7 @@ export default function HyperliquidReplicator({ strategy, timeframe, netProfit, 
   return (
     <Card className="bg-gradient-to-br from-blue-900 to-gray-900 border-blue-700">
       <CardHeader>
-        <CardTitle className="text-white text-2xl">
+        <CardTitle className="text-white text-2xl font-heading">
           🌐 Replicar estrategia en Hyperliquid
         </CardTitle>
         <CardDescription className="text-blue-200">
@@ -56,7 +56,7 @@ export default function HyperliquidReplicator({ strategy, timeframe, netProfit, 
       <CardContent className="space-y-6">
             {/* Viability Analysis */}
             <div className={`rounded-lg p-4 border-2 ${viability.isViable ? 'bg-green-900/20 border-green-500' : 'bg-red-900/20 border-red-500'}`}>
-              <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+              <h3 className="text-xl font-bold font-heading mb-3 flex items-center gap-2">
                 {viability.isViable ? '✅ VIABLE' : '⚠️ VIABLE CON MODIFICACIONES'}
                 <span className="text-sm font-normal">
                   (Análisis de {totalTrades} trades)
@@ -86,7 +86,7 @@ export default function HyperliquidReplicator({ strategy, timeframe, netProfit, 
 
             {/* Advantages */}
             <div className="bg-gray-800/50 rounded-lg p-4 border border-blue-600/30">
-              <h3 className="text-xl font-bold text-blue-300 mb-3">
+              <h3 className="text-xl font-bold font-heading text-blue-300 mb-3">
                 💎 Ventajas de Hyperliquid
               </h3>
               <div className="space-y-2">
@@ -98,7 +98,7 @@ export default function HyperliquidReplicator({ strategy, timeframe, netProfit, 
 
             {/* Setup Guide */}
             <div className="bg-gray-800/50 rounded-lg p-4 border border-cyan-600/30">
-              <h3 className="text-xl font-bold text-cyan-300 mb-3">
+              <h3 className="text-xl font-bold font-heading text-cyan-300 mb-3">
                 🔧 Configuración paso a paso
               </h3>
               <div className="space-y-4 text-gray-200">
@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
             {/* Resources */}
             <div className="bg-gray-800/50 rounded-lg p-4 border border-purple-600/30">
-              <h3 className="text-xl font-bold text-purple-300 mb-3">
+              <h3 className="text-xl font-bold font-heading text-purple-300 mb-3">
                 📚 Recursos útiles
               </h3>
               <div className="space-y-2 text-sm">

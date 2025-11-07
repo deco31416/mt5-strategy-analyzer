@@ -28,7 +28,6 @@
     
     --destructive: 0 84% 60%; /* #ef4444 - Red for errors */
     --destructive-foreground: 0 0% 98%;
-    
     --border: 0 0% 15%; /* #262626 - Subtle borders */
     --input: 0 0% 15%;
     --ring: 24 95% 53%; /* Orange ring */
