@@ -24,6 +24,7 @@ import { SessionAnalysisCard } from '@/components/SessionAnalysisCard'
 import { ScheduleAnalysisCard } from '@/components/ScheduleAnalysisCard'
 import { RiskAnalysisCard } from '@/components/RiskAnalysisCard'
 import { SymbolPerformanceCard } from '@/components/SymbolPerformanceCard'
+import { TradesHistoryPanel } from '@/components/TradesHistoryPanel'
 
 interface ApiTrade {
   ticket: number
@@ -157,6 +158,8 @@ export default function Home() {
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [loadingAlerts, setLoadingAlerts] = useState(false)
   const [loadingStats, setLoadingStats] = useState(false)
+  const [tradesHistoryData, setTradesHistoryData] = useState<any[]>([])
+  const [loadingTradesHistory, setLoadingTradesHistory] = useState(false)
   
   // Estados para los nuevos modales
   const [showOptimizationModal, setShowOptimizationModal] = useState(false)
@@ -280,6 +283,19 @@ export default function Home() {
       setStatisticsData(null)
     }
     setLoadingStats(false)
+  }
+
+  const loadTradesHistory = async () => {
+    setLoadingTradesHistory(true)
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/trades/history?limit=200&days_back=90`)
+      const result = await response.json()
+      setTradesHistoryData(result.trades || [])
+    } catch (error) {
+      console.error('Error loading trades history:', error)
+      setTradesHistoryData([])
+    }
+    setLoadingTradesHistory(false)
   }
 
   const generateDemoData = () => {
@@ -546,6 +562,7 @@ ${implementationGuide}
       loadHistory()
       loadAlerts()
       loadStatistics()
+      loadTradesHistory()
     }
   }, [activeView])
 
@@ -991,8 +1008,9 @@ ${implementationGuide}
                   </CardHeader>
                   <CardContent>
                     <Tabs defaultValue="history" className="w-full">
-                      <TabsList className="grid w-full grid-cols-3">
+                      <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="history">Historial</TabsTrigger>
+                        <TabsTrigger value="trades">Operaciones</TabsTrigger>
                         <TabsTrigger value="alerts">Alertas</TabsTrigger>
                         <TabsTrigger value="stats">Estadísticas</TabsTrigger>
                       </TabsList>
@@ -1002,6 +1020,15 @@ ${implementationGuide}
                           data={historyData} 
                           loading={loadingHistory}
                           onRefresh={loadHistory}
+                        />
+                      </TabsContent>
+                      
+                      <TabsContent value="trades">
+                        <TradesHistoryPanel 
+                          data={tradesHistoryData} 
+                          loading={loadingTradesHistory}
+                          onRefresh={loadTradesHistory}
+                          total={tradesHistoryData.length}
                         />
                       </TabsContent>
                       

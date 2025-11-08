@@ -71,7 +71,7 @@ export default function HyperliquidReplicator({ strategy, timeframe, netProfit, 
                   <strong>Velocidad requerida:</strong> {'<'}{viability.requiredSpeed}ms para {timeframe}
                 </p>
                 <p className="text-gray-200">
-                  <strong>Profit promedio:</strong> ${avgProfit.toFixed(2)} por trade
+                  <strong>Profit promedio:</strong> ${(avgProfit || 0).toFixed(2)} por trade
                 </p>
               </div>
 

@@ -185,7 +185,7 @@ export function StrategyOptimizationModal({
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    {Object.entries(result.original_parameters).map(([key, value]) => (
+                    {result.original_parameters && Object.entries(result.original_parameters).map(([key, value]) => (
                       <div key={key} className="flex justify-between items-center bg-zinc-900/50 p-3 rounded">
                         <span className="text-zinc-400 text-sm">{key}</span>
                         <span className="text-white font-medium">{String(value)}</span>
@@ -203,7 +203,7 @@ export function StrategyOptimizationModal({
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {Object.entries(result.optimized_parameters).map(([key, value]) => {
-                      const changed = result.original_parameters[key] !== value
+                      const changed = result.original_parameters && result.original_parameters[key] !== value
                       return (
                         <div 
                           key={key} 

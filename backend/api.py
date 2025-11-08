@@ -3,16 +3,17 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Optional
+from dotenv import load_dotenv
+import os
+
+# Cargar variables de entorno ANTES de cualquier import que las use
+load_dotenv()
+
 from strategy_engine import analyze_trades
 from strategy_templates import generate_code_and_explanation
 from openai_analyzer import ai_analyzer
 from database import db
-from dotenv import load_dotenv
 from openai_health_check import validate_openai_or_exit
-import os
-
-# Cargar variables de entorno
-load_dotenv()
 
 # ====== VALIDAR OPENAI AL ARRANQUE ======
 openai_status = validate_openai_or_exit(allow_continue=True)
@@ -302,3 +303,63 @@ def get_historical_analysis(days_back: int = Query(90)):
         return result
     except Exception as e:
         return {"error": str(e)}
+
+
+@app.get("/trades/history")
+def get_trades_history(limit: int = Query(100), days_back: int = Query(30)):
+    """
+    Obtiene el historial completo de operaciones cerradas de MT5
+    """
+    try:
+        from strategy_engine import analyze_historical_data
+        import MetaTrader5 as mt5
+        
+        if not mt5.initialize():
+            return {"error": "MT5 no inicializado"}
+        
+        historical_data = analyze_historical_data(days_back)
+        deals_df = historical_data.get("deals_df")
+        
+        if deals_df is None or len(deals_df) == 0:
+            mt5.shutdown()
+            return {"trades": [], "total": 0}
+        
+        # Filtrar solo deals de cierre y convertir a formato JSON serializable
+        closed_trades = deals_df[deals_df["entry"] == 1].copy()
+        closed_trades = closed_trades.sort_values("time", ascending=False)
+        closed_trades = closed_trades.head(limit)
+        
+        # Convertir a lista de diccionarios
+        trades = []
+        for _, trade in closed_trades.iterrows():
+            trades.append({
+                "ticket": int(trade["ticket"]),
+                "symbol": str(trade["symbol"]),
+                "type": "BUY" if trade["type"] == 0 else "SELL",
+                "volume": float(trade["volume"]),
+                "price": float(trade["price"]),
+                "profit": float(trade["profit"]),
+                "time": trade["time"].isoformat(),
+                "commission": float(trade.get("commission", 0)),
+                "swap": float(trade.get("swap", 0))
+            })
+        
+        mt5.shutdown()
+        return {
+            "trades": trades,
+            "total": len(trades),
+            "days_back": days_back
+        }
+    except Exception as e:
+        return {"error": str(e), "trades": [], "total": 0}
+
+
+# ===============================================================
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("API_PORT", 8080))
+    host = os.getenv("API_HOST", "0.0.0.0")
+    print(f"\n🚀 Iniciando servidor en http://{host}:{port}")
+    print("="*60)
+    uvicorn.run(app, host=host, port=port)
