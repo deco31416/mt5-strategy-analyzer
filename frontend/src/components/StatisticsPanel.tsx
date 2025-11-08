@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 interface Statistics {
   total_analysis: number
@@ -14,35 +14,26 @@ interface Statistics {
   }
 }
 
-export default function StatisticsPanel() {
-  const [stats, setStats] = useState<Statistics | null>(null)
-  const [loading, setLoading] = useState(false)
+interface StatisticsPanelProps {
+  data: Statistics | null
+  loading: boolean
+  onRefresh: () => void
+}
 
-  const loadStats = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('http://localhost:8080/statistics')
-      const data = await response.json()
-      setStats(data)
-    } catch (error) {
-      console.error('Error loading statistics:', error)
-    }
-    setLoading(false)
-  }
+export default function StatisticsPanel({ data, loading, onRefresh }: StatisticsPanelProps) {
+  const [backupLoading, setBackupLoading] = useState(false)
 
   const createBackup = async () => {
+    setBackupLoading(true)
     try {
       const response = await fetch('http://localhost:8080/backup', { method: 'POST' })
-      const data = await response.json()
-      alert(`✅ ${data.message}\nArchivo: ${data.path}`)
+      const result = await response.json()
+      alert(`✅ ${result.message}\nArchivo: ${result.path}`)
     } catch (error) {
       alert('❌ Error creando backup')
     }
+    setBackupLoading(false)
   }
-
-  useEffect(() => {
-    loadStats()
-  }, [])
 
   return (
     <Card className="bg-zinc-900 border-zinc-800 card-hover">
@@ -57,8 +48,8 @@ export default function StatisticsPanel() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="text-center py-8 text-zinc-500">Cargando...</div>
-        ) : !stats ? (
+          <div className="text-center py-8 text-zinc-500">Cargando estadísticas...</div>
+        ) : !data ? (
           <div className="text-center py-8 text-zinc-500">
             No hay datos disponibles
           </div>
@@ -67,40 +58,41 @@ export default function StatisticsPanel() {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700">
                 <div className="text-sm text-zinc-400 mb-1">Total Análisis</div>
-                <div className="text-3xl font-bold text-orange-500">{stats.total_analysis}</div>
+                <div className="text-3xl font-bold text-orange-500">{data.total_analysis}</div>
               </div>
               
               <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700">
                 <div className="text-sm text-zinc-400 mb-1">Total Trades</div>
-                <div className="text-3xl font-bold text-orange-500">{stats.total_trades}</div>
+                <div className="text-3xl font-bold text-orange-500">{data.total_trades}</div>
               </div>
               
               <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700 col-span-2">
                 <div className="text-sm text-zinc-400 mb-1">Profit Total Acumulado</div>
-                <div className={`text-3xl font-bold ${(stats.total_profit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  ${(stats.total_profit || 0).toFixed(2)}
+                <div className={`text-3xl font-bold ${(data.total_profit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  ${(data.total_profit || 0).toFixed(2)}
                 </div>
               </div>
             </div>
 
             <div className="bg-gradient-to-r from-orange-500/10 to-transparent rounded-lg p-4 border border-orange-500/30 mb-4">
               <div className="text-sm text-zinc-400 mb-1">🏆 Mejor Estrategia</div>
-              <div className="text-lg font-bold text-white">{stats.best_strategy?.name || 'N/A'}</div>
+              <div className="text-lg font-bold text-white">{data.best_strategy?.name || 'N/A'}</div>
               <div className="text-sm text-green-500">
-                Profit: ${(stats.best_strategy?.profit || 0).toFixed(2)}
+                Profit: ${(data.best_strategy?.profit || 0).toFixed(2)}
               </div>
             </div>
 
             <div className="space-y-2">
               <Button
                 onClick={createBackup}
+                disabled={backupLoading}
                 className="w-full bg-orange-600 hover:bg-orange-700 glow-orange font-semibold"
               >
-                💾 Crear Backup de Datos
+                {backupLoading ? 'Creando Backup...' : '💾 Crear Backup de Datos'}
               </Button>
               
               <Button
-                onClick={loadStats}
+                onClick={onRefresh}
                 variant="outline"
                 className="w-full bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
               >

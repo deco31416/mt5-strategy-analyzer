@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect, useState } from "react"
 
 interface Alert {
   id: number
@@ -11,29 +10,13 @@ interface Alert {
   message: string
 }
 
-export default function AlertsPanel() {
-  const [alerts, setAlerts] = useState<Alert[]>([])
-  const [loading, setLoading] = useState(false)
+interface AlertsPanelProps {
+  data: Alert[]
+  loading: boolean
+  onRefresh: () => void
+}
 
-  const loadAlerts = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('http://localhost:8080/alerts?limit=10')
-      const data = await response.json()
-      setAlerts(data.alerts || [])
-    } catch (error) {
-      console.error('Error loading alerts:', error)
-    }
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    loadAlerts()
-    // Auto-refresh cada 30 segundos
-    const interval = setInterval(loadAlerts, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
+export default function AlertsPanel({ data, loading, onRefresh }: AlertsPanelProps) {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
@@ -73,14 +56,14 @@ export default function AlertsPanel() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="text-center py-8 text-zinc-500">Cargando...</div>
-        ) : alerts.length === 0 ? (
+          <div className="text-center py-8 text-zinc-500">Cargando alertas...</div>
+        ) : data.length === 0 ? (
           <div className="text-center py-8 text-green-500">
             ✅ No hay alertas. Todo funciona correctamente.
           </div>
         ) : (
           <div className="space-y-3 max-h-[400px] overflow-y-auto">
-            {alerts.map((alert) => (
+            {data.map((alert) => (
               <div
                 key={alert.id}
                 className={`bg-zinc-800/50 rounded-lg p-4 border-l-4 ${getSeverityColor(alert.severity)} transition-all duration-300 hover:bg-zinc-800/70`}
@@ -103,6 +86,13 @@ export default function AlertsPanel() {
             ))}
           </div>
         )}
+        
+        <button
+          onClick={onRefresh}
+          className="mt-4 w-full py-2 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg border border-zinc-700 transition-colors"
+        >
+          🔄 Actualizar Alertas
+        </button>
       </CardContent>
     </Card>
   )

@@ -100,6 +100,35 @@ class StrategyDatabase:
             )
         ''')
         
+        # Tabla de optimizaciones generadas por IA
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS ai_optimizations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                strategy_name TEXT,
+                optimized_parameters TEXT,
+                expected_improvement TEXT,
+                reasoning TEXT,
+                risk_assessment TEXT,
+                implementation_steps TEXT,
+                warnings TEXT,
+                ai_powered BOOLEAN DEFAULT 1
+            )
+        ''')
+        
+        # Tabla de análisis de sesiones
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS session_analysis (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                analysis_id INTEGER,
+                session_name TEXT,
+                total_profit REAL,
+                avg_profit REAL,
+                trade_count INTEGER,
+                FOREIGN KEY (analysis_id) REFERENCES strategy_analysis (id)
+            )
+        ''')
+        
         conn.commit()
         conn.close()
         print(f"✅ Base de datos inicializada: {self.db_path}")
@@ -326,6 +355,55 @@ class StrategyDatabase:
                 "profit": best_strategy[1] if best_strategy else 0
             }
         }
+    
+    def save_optimization(self, strategy_name: str, optimization: Dict):
+        """Guarda una optimización generada por IA"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO ai_optimizations (
+                strategy_name, optimized_parameters, expected_improvement,
+                reasoning, risk_assessment, implementation_steps, warnings, ai_powered
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            strategy_name,
+            json.dumps(optimization.get("optimized_parameters", {})),
+            optimization.get("expected_improvement", ""),
+            optimization.get("reasoning", ""),
+            optimization.get("risk_assessment", ""),
+            json.dumps(optimization.get("implementation_steps", [])),
+            json.dumps(optimization.get("warnings", [])),
+            optimization.get("ai_powered", False)
+        ))
+        
+        conn.commit()
+        conn.close()
+    
+    def get_optimizations_history(self, strategy_name: str = None, limit: int = 10) -> List[Dict]:
+        """Obtiene historial de optimizaciones"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        if strategy_name:
+            cursor.execute('''
+                SELECT * FROM ai_optimizations 
+                WHERE strategy_name = ?
+                ORDER BY timestamp DESC 
+                LIMIT ?
+            ''', (strategy_name, limit))
+        else:
+            cursor.execute('''
+                SELECT * FROM ai_optimizations 
+                ORDER BY timestamp DESC 
+                LIMIT ?
+            ''', (limit,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        return [dict(row) for row in rows]
 
 # Instancia global
 db = StrategyDatabase()

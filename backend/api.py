@@ -1,17 +1,28 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Dict, Optional
 from strategy_engine import analyze_trades
 from strategy_templates import generate_code_and_explanation
+from openai_analyzer import ai_analyzer
 from database import db
+from dotenv import load_dotenv
 import os
 
+# Cargar variables de entorno
+load_dotenv()
+
 app = FastAPI()
+
+# Obtener orígenes CORS desde .env
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001")
+allowed_origins = [origin.strip() for origin in cors_origins.split(",")]
 
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Allow requests from the frontend
+    allow_origins=allowed_origins,  # Desde .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -76,3 +87,204 @@ def create_backup():
     """Crea un backup de la base de datos"""
     backup_path = db.backup_database()
     return {"message": "Backup creado exitosamente", "path": backup_path}
+
+
+# ===============================================================
+#  NUEVOS ENDPOINTS: Análisis Potenciado con IA
+# ===============================================================
+
+@app.get("/analyze/full")
+def analyze_full():
+    """
+    Análisis completo con todas las métricas históricas y análisis IA
+    Este endpoint reemplaza a /analyze cuando se quiere el análisis completo
+    """
+    result = analyze_trades()
+    return result
+
+
+@app.post("/strategy/optimize")
+def optimize_strategy(strategy_data: Dict):
+    """
+    Optimiza parámetros de la estrategia usando IA de OpenAI
+    
+    Body example:
+    {
+        "strategy_name": "Grid Scalping",
+        "strategy_description": "...",
+        "current_parameters": {
+            "grid_step": 50,
+            "lot_size": 0.01,
+            "take_profit": 30,
+            "stop_loss": 100
+        },
+        "current_performance": {
+            "win_rate": 65.5,
+            "profit_factor": 1.8,
+            "max_drawdown": 500,
+            "total_trades": 150
+        }
+    }
+    """
+    try:
+        current_performance = strategy_data.get("current_performance", {})
+        optimization = ai_analyzer.optimize_parameters_with_ai(strategy_data, current_performance)
+        
+        # Guardar optimización en DB
+        try:
+            db.save_optimization(strategy_data.get("strategy_name"), optimization)
+        except Exception as e:
+            print(f"Error guardando optimización: {e}")
+        
+        return optimization
+    except Exception as e:
+        return {
+            "error": str(e),
+            "message": "Error al optimizar estrategia"
+        }
+
+
+class OptimizationRequest(BaseModel):
+    strategy_name: str
+    strategy_description: str
+    current_parameters: Dict
+    current_performance: Dict
+
+
+@app.post("/strategy/optimize-enhanced")
+def optimize_strategy_enhanced(request: OptimizationRequest):
+    """
+    Versión mejorada del endpoint de optimización con validación de datos
+    """
+    try:
+        strategy_data = {
+            "strategy_name": request.strategy_name,
+            "strategy_description": request.strategy_description,
+            "current_parameters": request.current_parameters
+        }
+        
+        optimization = ai_analyzer.optimize_parameters_with_ai(
+            strategy_data, 
+            request.current_performance
+        )
+        
+        # Guardar optimización en DB
+        try:
+            db.save_optimization(request.strategy_name, optimization)
+        except Exception as e:
+            print(f"Error guardando optimización: {e}")
+        
+        return optimization
+    except Exception as e:
+        return {
+            "error": str(e),
+            "message": "Error al optimizar estrategia"
+        }
+
+
+@app.get("/analyze/sessions")
+def get_session_analysis():
+    """
+    Obtiene análisis detallado por sesiones de trading (Asian, London, NY)
+    """
+    try:
+        from strategy_engine import analyze_trading_sessions, analyze_historical_data
+        import MetaTrader5 as mt5
+        
+        if not mt5.initialize():
+            return {"error": "MT5 no inicializado"}
+        
+        historical_data = analyze_historical_data()
+        session_analysis = analyze_trading_sessions(historical_data.get("deals_df"))
+        
+        mt5.shutdown()
+        return session_analysis
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/analyze/schedule")
+def get_schedule_analysis():
+    """
+    Obtiene análisis de performance por hora y día de la semana
+    """
+    try:
+        from strategy_engine import analyze_trading_schedule, analyze_historical_data
+        import MetaTrader5 as mt5
+        
+        if not mt5.initialize():
+            return {"error": "MT5 no inicializado"}
+        
+        historical_data = analyze_historical_data()
+        schedule_analysis = analyze_trading_schedule(historical_data.get("deals_df"))
+        
+        mt5.shutdown()
+        return schedule_analysis
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/analyze/risk")
+def get_risk_analysis():
+    """
+    Obtiene análisis de gestión de riesgo
+    """
+    try:
+        from strategy_engine import analyze_risk_management, analyze_historical_data
+        import MetaTrader5 as mt5
+        
+        if not mt5.initialize():
+            return {"error": "MT5 no inicializado"}
+        
+        historical_data = analyze_historical_data()
+        risk_analysis = analyze_risk_management(historical_data.get("deals_df"))
+        
+        mt5.shutdown()
+        return risk_analysis
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/analyze/symbols")
+def get_symbols_analysis():
+    """
+    Obtiene análisis de performance por símbolo
+    """
+    try:
+        from strategy_engine import analyze_symbols_performance, analyze_historical_data
+        import MetaTrader5 as mt5
+        
+        if not mt5.initialize():
+            return {"error": "MT5 no inicializado"}
+        
+        historical_data = analyze_historical_data()
+        symbols_analysis = analyze_symbols_performance(historical_data.get("deals_df"))
+        
+        mt5.shutdown()
+        return symbols_analysis
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/analyze/historical")
+def get_historical_analysis(days_back: int = Query(90)):
+    """
+    Obtiene métricas históricas completas de los últimos X días
+    """
+    try:
+        from strategy_engine import analyze_historical_data
+        import MetaTrader5 as mt5
+        
+        if not mt5.initialize():
+            return {"error": "MT5 no inicializado"}
+        
+        historical_data = analyze_historical_data(days_back)
+        
+        # Remover DataFrames del resultado (no JSON serializable)
+        result = {k: v for k, v in historical_data.items() 
+                 if not k.endswith("_df")}
+        
+        mt5.shutdown()
+        return result
+    except Exception as e:
+        return {"error": str(e)}

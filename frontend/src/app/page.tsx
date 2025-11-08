@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -11,8 +11,18 @@ import HistoryPanel from '@/components/HistoryPanel'
 import AlertsPanel from '@/components/AlertsPanel'
 import StatisticsPanel from '@/components/StatisticsPanel'
 import ConnectionError from '@/components/ConnectionError'
+import NavigationMenu from '@/components/NavigationMenu'
 import LegalFooter from '@/components/LegalFooter'
 import SubFooter from '@/components/SubFooter'
+import { AIAnalysisCard } from '@/components/AIAnalysisCard'
+import { AdvancedMetricsCards } from '@/components/AdvancedMetricsCards'
+import { StrategyOptimizationModal } from '@/components/StrategyOptimizationModal'
+import { StrategyEvolutionChart } from '@/components/StrategyEvolutionChart'
+import { SymbolDetailModal } from '@/components/SymbolDetailModal'
+import { SessionAnalysisCard } from '@/components/SessionAnalysisCard'
+import { ScheduleAnalysisCard } from '@/components/ScheduleAnalysisCard'
+import { RiskAnalysisCard } from '@/components/RiskAnalysisCard'
+import { SymbolPerformanceCard } from '@/components/SymbolPerformanceCard'
 
 interface ApiTrade {
   ticket: number
@@ -34,8 +44,94 @@ interface AnalysisResult {
     timeframe: string
     indicators: string[]
     explanation: string
+    win_rate?: number
+    profit_factor?: number
+    max_drawdown?: number
+    sharpe_ratio?: number
+    account_balance?: number
+    account_equity?: number
+    last_update?: string
+    // Campos históricos en summary (referencia rápida)
+    historical_total_trades?: number
+    historical_win_rate?: number
+    historical_profit?: number
+    best_trade?: number
+    worst_trade?: number
+    longest_win_streak?: number
+    longest_loss_streak?: number
+    avg_trade_duration?: number
+    best_session?: string
+    worst_session?: string
+    best_hour?: number
+    best_day?: string
+    avg_risk_reward?: number
+    risk_per_trade?: number
+    best_symbol?: string
+    worst_symbol?: string
+    trading_style?: string
+    risk_profile?: string
   }
   trades: ApiTrade[]
+  // Objetos completos de análisis (nivel superior)
+  historical_metrics?: {
+    total_trades: number
+    win_rate: number
+    total_profit: number
+    best_trade: number
+    worst_trade: number
+    longest_win_streak: number
+    longest_loss_streak: number
+    avg_duration_minutes: number
+    deals_df?: any
+  }
+  session_analysis?: ({
+    [key: string]: {
+      total_profit: number
+      trade_count: number
+      avg_profit: number
+      win_rate: number
+    }
+  } & {
+    best_session?: string
+    worst_session?: string
+  })
+  schedule_analysis?: {
+    by_hour?: { [key: string]: any }
+    by_day?: { [key: string]: any }
+    best_hour?: number
+    best_day?: string
+  }
+  risk_analysis?: {
+    avg_win: number
+    avg_loss: number
+    risk_reward_ratio: number
+    risk_per_trade_pct: number
+    avg_rr?: number
+    avg_risk_percent?: number
+  }
+  symbol_analysis?: ({
+    [key: string]: {
+      total_profit: number
+      trade_count: number
+      win_rate: number
+    }
+  } & {
+    best_symbol?: string
+    worst_symbol?: string
+  })
+  ai_analysis?: {
+    ai_powered: boolean
+    strategy_name: string
+    strategy_description: string
+    confidence_score: number
+    detailed_analysis: string
+    strengths: string[]
+    weaknesses: string[]
+    market_conditions: string
+    indicators_detected: string[]
+    trading_style: string
+    risk_profile: string
+  }
 }
 
 interface StrategyCode {
@@ -54,12 +150,27 @@ export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState<'mql4' | 'mql5' | 'python' | 'typescript'>('mql5')
   const [connectionError, setConnectionError] = useState<string | null>(null)
   const [activeView, setActiveView] = useState<'analysis' | 'guide' | 'hyperliquid' | 'control'>('analysis')
+  const [historyData, setHistoryData] = useState<any[]>([])
+  const [alertsData, setAlertsData] = useState<any[]>([])
+  const [statisticsData, setStatisticsData] = useState<any>(null)
+  const [loadingHistory, setLoadingHistory] = useState(false)
+  const [loadingAlerts, setLoadingAlerts] = useState(false)
+  const [loadingStats, setLoadingStats] = useState(false)
+  
+  // Estados para los nuevos modales
+  const [showOptimizationModal, setShowOptimizationModal] = useState(false)
+  const [showSymbolModal, setShowSymbolModal] = useState(false)
+  const [selectedSymbol, setSelectedSymbol] = useState<string>('')
+  const [useBasicAnalysis, setUseBasicAnalysis] = useState(false)
+  const [exportingStrategy, setExportingStrategy] = useState(false)
 
   const analyzeAccount = async () => {
     setLoading(true)
     setConnectionError(null)
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/analyze`)
+      // Usar análisis básico o completo según toggle
+      const endpoint = useBasicAnalysis ? '/analyze' : '/analyze/full'
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}${endpoint}`)
       const result = await response.json()
       
       // Verificar si hay error de conexión MT5
@@ -67,14 +178,107 @@ export default function Home() {
         setConnectionError(result.error)
         setData(null)
       } else {
-        console.log('API Response:', result)
+        console.log(`API Response (${useBasicAnalysis ? 'Basic' : 'Full'} Analysis):`, result)
         setData(result)
+        
+        // Log de datos IA si está disponible
+        if (!useBasicAnalysis && result.ai_analysis?.ai_powered) {
+          console.log('✅ Análisis con IA activado:', result.ai_analysis.strategy_name)
+          console.log('📊 Confianza:', result.ai_analysis.confidence_score + '%')
+        } else if (useBasicAnalysis) {
+          console.log('⚡ Análisis básico (sin IA, más rápido)')
+        } else {
+          console.log('⚠️ Análisis básico (OpenAI no configurado)')
+        }
       }
     } catch (error) {
       console.error('Error analyzing account:', error)
       setConnectionError('Error de conexión con el servidor. Asegúrate de que el backend esté corriendo en http://localhost:8080')
     }
     setLoading(false)
+  }
+
+  const exportStrategy = async () => {
+    if (!data?.summary?.strategy) {
+      alert('No hay estrategia detectada para exportar')
+      return
+    }
+
+    setExportingStrategy(true)
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/strategy/export?strategy=${encodeURIComponent(data.summary.strategy)}&language=${selectedLanguage}`
+      )
+      
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        
+        // Determinar extensión según lenguaje
+        const extensions: { [key: string]: string } = {
+          'mql4': '.mq4',
+          'mql5': '.mq5',
+          'python': '.py',
+          'typescript': '.ts'
+        }
+        const ext = extensions[selectedLanguage] || '.txt'
+        a.download = `${data.summary.strategy}${ext}`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        
+        console.log('✅ Estrategia exportada:', data.summary.strategy)
+      } else {
+        console.error('Error exportando estrategia')
+        alert('Error al exportar la estrategia')
+      }
+    } catch (error) {
+      console.error('Error exportando estrategia:', error)
+      alert('Error al exportar la estrategia')
+    }
+    setExportingStrategy(false)
+  }
+
+  const loadHistory = async () => {
+    setLoadingHistory(true)
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/history?limit=50`)
+      const result = await response.json()
+      setHistoryData(result.history || [])
+    } catch (error) {
+      console.error('Error loading history:', error)
+      setHistoryData([])
+    }
+    setLoadingHistory(false)
+  }
+
+  const loadAlerts = async () => {
+    setLoadingAlerts(true)
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/alerts?limit=20`)
+      const result = await response.json()
+      setAlertsData(result.alerts || [])
+    } catch (error) {
+      console.error('Error loading alerts:', error)
+      setAlertsData([])
+    }
+    setLoadingAlerts(false)
+  }
+
+  const loadStatistics = async () => {
+    setLoadingStats(true)
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/statistics`)
+      const result = await response.json()
+      setStatisticsData(result)
+    } catch (error) {
+      console.error('Error loading statistics:', error)
+      setStatisticsData(null)
+    }
+    setLoadingStats(false)
   }
 
   const generateDemoData = () => {
@@ -152,6 +356,16 @@ export default function Home() {
     a.download = 'strategy_report.md'
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  const handleOptimizationResult = (result: any) => {
+    console.log('✅ Optimización completada:', result)
+    // Aquí podrías actualizar el estado o mostrar una notificación
+  }
+
+  const handleSymbolClick = (symbol: string) => {
+    setSelectedSymbol(symbol)
+    setShowSymbolModal(true)
   }
 
   const generateMarkdownReport = (data: AnalysisResult): string => {
@@ -325,17 +539,27 @@ ${implementationGuide}
     return chart
   }
 
+  // Cargar datos del backend cuando se cambia a la vista de control
+  useEffect(() => {
+    if (activeView === 'control') {
+      loadHistory()
+      loadAlerts()
+      loadStatistics()
+    }
+  }, [activeView])
+
   return (
     <div className="min-h-screen bg-black">
       {/* Header with orange accent */}
       <div className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold font-heading">
+            {/* <h1 className="text-3xl font-bold font-heading">
               <span className="text-white">MT5</span>
               <span className="text-orange-500"> Strategy Analyzer</span>
               <span className="ml-3 text-orange-500">⚡</span>
-            </h1>
+            </h1> */}
+            <NavigationMenu />  
             <div className="text-xs text-zinc-500">
               Developed by <span className="text-orange-500 font-semibold">Deco31416</span>
             </div>
@@ -366,12 +590,33 @@ ${implementationGuide}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
+              {/* Toggle para análisis básico/completo */}
+              <div className="flex items-center justify-between p-3 bg-zinc-800/50 rounded-lg border border-zinc-700 mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-zinc-300">
+                    {useBasicAnalysis ? '⚡ Análisis Rápido' : '🤖 Análisis con IA'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setUseBasicAnalysis(!useBasicAnalysis)}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${
+                    useBasicAnalysis ? 'bg-blue-600' : 'bg-orange-600'
+                  }`}
+                >
+                  <div
+                    className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+                      useBasicAnalysis ? 'left-1' : 'left-7'
+                    }`}
+                  />
+                </button>
+              </div>
+              
               <Button
                 onClick={analyzeAccount}
                 disabled={loading}
                 className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold"
               >
-                {loading ? 'Analyzing...' : 'Analyze Strategy'}
+                {loading ? 'Analyzing...' : useBasicAnalysis ? '⚡ Analizar Rápido' : '🤖 Analizar con IA'}
               </Button>
 
               {/* Botones de navegación */}
@@ -487,24 +732,89 @@ ${implementationGuide}
                     </div>
                     
                     {/* Action Buttons */}
-                    <div className="flex gap-2 mt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mt-4">
                       <Button
                         onClick={generateCode}
                         disabled={loadingCode}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                        className="bg-blue-600 hover:bg-blue-700"
                       >
-                        {loadingCode ? 'Generando...' : 'Generar Código'}
+                        {loadingCode ? 'Generando...' : '💻 Generar Código'}
                       </Button>
                       <Button
                         onClick={downloadReport}
-                        className="flex-1 bg-green-600 hover:bg-green-700"
+                        className="bg-green-600 hover:bg-green-700"
                       >
-                        Descargar Reporte
+                        📥 Descargar Reporte
+                      </Button>
+                      <Button
+                        onClick={() => setShowOptimizationModal(true)}
+                        className="bg-orange-600 hover:bg-orange-700"
+                      >
+                        🤖 Optimizar con IA
+                      </Button>
+                      <Button
+                        onClick={exportStrategy}
+                        disabled={exportingStrategy}
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        {exportingStrategy ? 'Exportando...' : '📦 Exportar Archivo'}
                       </Button>
                     </div>
                   </CardContent>
                 </Card>
                 </div>
+
+                {/* AI Analysis Card - NUEVO */}
+                {data.ai_analysis && (
+                  <div className="mb-6">
+                    <AIAnalysisCard analysis={data.ai_analysis} />
+                  </div>
+                )}
+
+                {/* Advanced Metrics Cards - NUEVO */}
+                {(data.summary?.historical_total_trades || data.historical_metrics) && (
+                  <div className="mb-6">
+                    <AdvancedMetricsCards data={data} onSymbolClick={handleSymbolClick} />
+                  </div>
+                )}
+
+                {/* Strategy Evolution Chart - NUEVO */}
+                {data.summary?.strategy && (
+                  <div className="mb-6">
+                    <StrategyEvolutionChart strategyName={data.summary.strategy} />
+                  </div>
+                )}
+
+                {/* Session Analysis - NUEVO */}
+                {data.session_analysis && (
+                  <div className="mb-6">
+                    <SessionAnalysisCard sessionAnalysis={data.session_analysis} />
+                  </div>
+                )}
+
+                {/* Schedule Analysis - NUEVO */}
+                {data.schedule_analysis && (
+                  <div className="mb-6">
+                    <ScheduleAnalysisCard scheduleAnalysis={data.schedule_analysis} />
+                  </div>
+                )}
+
+                {/* Risk Analysis - NUEVO */}
+                {data.risk_analysis && (
+                  <div className="mb-6">
+                    <RiskAnalysisCard riskAnalysis={data.risk_analysis} />
+                  </div>
+                )}
+
+                {/* Symbol Performance - NUEVO */}
+                {data.symbol_analysis && (
+                  <div className="mb-6">
+                    <SymbolPerformanceCard 
+                      symbolAnalysis={data.symbol_analysis} 
+                      onSymbolClick={handleSymbolClick}
+                    />
+                  </div>
+                )}
 
                 {/* Code Generator Section */}
                 {codeData && (
@@ -682,15 +992,27 @@ ${implementationGuide}
                       </TabsList>
                       
                       <TabsContent value="history">
-                        <HistoryPanel />
+                        <HistoryPanel 
+                          data={historyData} 
+                          loading={loadingHistory}
+                          onRefresh={loadHistory}
+                        />
                       </TabsContent>
                       
                       <TabsContent value="alerts">
-                        <AlertsPanel />
+                        <AlertsPanel 
+                          data={alertsData}
+                          loading={loadingAlerts}
+                          onRefresh={loadAlerts}
+                        />
                       </TabsContent>
                       
                       <TabsContent value="stats">
-                        <StatisticsPanel />
+                        <StatisticsPanel 
+                          data={statisticsData}
+                          loading={loadingStats}
+                          onRefresh={loadStatistics}
+                        />
                       </TabsContent>
                     </Tabs>
                   </CardContent>
@@ -701,6 +1023,20 @@ ${implementationGuide}
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      <StrategyOptimizationModal 
+        isOpen={showOptimizationModal} 
+        onClose={() => setShowOptimizationModal(false)} 
+        strategyData={data}
+        onOptimize={handleOptimizationResult}
+      />
+      
+      <SymbolDetailModal 
+        isOpen={showSymbolModal} 
+        onClose={() => setShowSymbolModal(false)} 
+        symbol={selectedSymbol}
+      />
 
       {/* Footers */}
       <LegalFooter />

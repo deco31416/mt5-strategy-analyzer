@@ -51,9 +51,9 @@ export default function StrategyChart({ data }: StrategyChartProps) {
           <Line
             type="monotone"
             dataKey="cumulative"
-            stroke="#F97316"
+            stroke="#ff6c02"
             strokeWidth={2}
-            dot={{ fill: '#F97316', strokeWidth: 2, r: 4 }}
+            dot={{ fill: '#ff6c02', strokeWidth: 2, r: 4 }}
           />
         </LineChart>
       </ResponsiveContainer>

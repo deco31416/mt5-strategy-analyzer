@@ -14,7 +14,7 @@
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 98%;
     
-    --primary: 24 95% 53%; /* #f97316 - Vibrant Orange */
+    --primary: 20 100% 51%; /* #ff6c02 - Vibrant Orange */
     --primary-foreground: 0 0% 4%;
     
     --secondary: 0 0% 15%; /* #262626 - Dark Gray */
@@ -23,18 +23,18 @@
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 63%; /* #a1a1a1 - Muted Gray */
     
-    --accent: 20 100% 65%; /* #ff8247 - Accent Orange */
+    --accent: 20 100% 51%; /* #ff6c02 - Accent Orange */
     --accent-foreground: 0 0% 4%;
     
     --destructive: 0 84% 60%; /* #ef4444 - Red for errors */
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 15%; /* #262626 - Subtle borders */
     --input: 0 0% 15%;
-    --ring: 24 95% 53%; /* Orange ring */
+    --ring: 20 100% 51%; /* Orange ring */
     
     --radius: 0.75rem;
     
-    --chart-1: 24 95% 53%;
+    --chart-1: 20 100% 51%;
     --chart-2: 33 100% 50%;
     --chart-3: 45 93% 47%;
     --chart-4: 55 92% 45%;
@@ -65,22 +65,22 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: #f97316;
+    background: #ff6c02;
     border-radius: 5px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: #ff8247;
+    background: #cc5602;
   }
 }
 
 /* Card hover effect - Simplified */
 .card-hover {
   transition: all 0.2s ease;
-  border: 1px solid rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(255, 108, 2, 0.1);
 }
 
 .card-hover:hover {
-  border-color: rgba(249, 115, 22, 0.2);
+  border-color: rgba(255, 108, 2, 0.2);
 }
 

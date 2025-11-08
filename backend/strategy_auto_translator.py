@@ -6,16 +6,21 @@ Analiza una cuenta MT5, detecta la estrategia y genera código MQL5, Python y Ty
 
 import MetaTrader5 as mt5
 import pandas as pd
+import os
 from datetime import datetime
+from dotenv import load_dotenv
 from strategy_templates import generate_code_and_explanation
 from colorama import init, Fore, Back, Style
 
 # Inicializar colorama
 init(autoreset=True)
 
-MT5_LOGIN = 18104701
-MT5_PASSWORD = "X*hr&26R"
-MT5_SERVER = "STARTRADERFinancial-Live"
+# Cargar variables de entorno
+load_dotenv()
+
+MT5_LOGIN = int(os.getenv("MT5_LOGIN", 0))
+MT5_PASSWORD = os.getenv("MT5_PASSWORD", "")
+MT5_SERVER = os.getenv("MT5_SERVER", "")
 
 def get_trades():
     print(f"{Fore.CYAN}🔗 Conectando a MT5...{Style.RESET_ALL}")

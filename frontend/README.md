@@ -28,5 +28,7 @@ pnpm dev
 
 Create a `.env.local` file with:
 ```
-NEXT_PUBLIC_API_BASE=http://localhost:8000
+NEXT_PUBLIC_API_BASE=http://localhost:8080
 ```
+
+Make sure the backend is running on port 8080.

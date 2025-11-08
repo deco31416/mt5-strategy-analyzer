@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect, useState } from "react"
 
 interface HistoryItem {
   id: number
@@ -13,26 +12,13 @@ interface HistoryItem {
   profit_factor: number
 }
 
-export default function HistoryPanel() {
-  const [history, setHistory] = useState<HistoryItem[]>([])
-  const [loading, setLoading] = useState(false)
+interface HistoryPanelProps {
+  data: HistoryItem[]
+  loading: boolean
+  onRefresh: () => void
+}
 
-  const loadHistory = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('http://localhost:8080/history?limit=20')
-      const data = await response.json()
-      setHistory(data.history || [])
-    } catch (error) {
-      console.error('Error loading history:', error)
-    }
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    loadHistory()
-  }, [])
-
+export default function HistoryPanel({ data, loading, onRefresh }: HistoryPanelProps) {
   return (
     <Card className="bg-zinc-900 border-zinc-800 card-hover">
       <CardHeader>
@@ -41,19 +27,19 @@ export default function HistoryPanel() {
           Historial de Análisis
         </CardTitle>
         <CardDescription className="text-zinc-400">
-          Últimos 20 análisis guardados
+          Últimos análisis guardados en la base de datos
         </CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="text-center py-8 text-zinc-500">Cargando...</div>
-        ) : history.length === 0 ? (
+          <div className="text-center py-8 text-zinc-500">Cargando historial...</div>
+        ) : data.length === 0 ? (
           <div className="text-center py-8 text-zinc-500">
             No hay historial disponible. Ejecuta un análisis para comenzar.
           </div>
         ) : (
           <div className="space-y-3 max-h-[500px] overflow-y-auto">
-            {history.map((item) => (
+            {data.map((item) => (
               <div
                 key={item.id}
                 className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700 hover:border-orange-500/50 transition-all duration-300"
@@ -92,10 +78,10 @@ export default function HistoryPanel() {
         )}
         
         <button
-          onClick={loadHistory}
+          onClick={onRefresh}
           className="mt-4 w-full py-2 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg border border-zinc-700 transition-colors"
         >
-          🔄 Actualizar
+          🔄 Actualizar Historial
         </button>
       </CardContent>
     </Card>
