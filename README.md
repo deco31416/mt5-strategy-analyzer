@@ -4,12 +4,14 @@ Analizador avanzado de estrategias de trading para MetaTrader 5 con IA, análisi
 
 ## ✨ Características Principales
 
+- 🔍 **Detección Automática de Estrategia**: **NO necesitas saber qué estrategia usas** - El sistema analiza tus trades y detecta automáticamente: Grid, Scalping, Trend Following, Martingale, Hedge, etc.
 - 🤖 **Análisis con IA**: Evaluación inteligente de estrategias usando OpenAI GPT-4
+- 📊 **Análisis de Historial Completo**: Lee todos tus trades cerrados (últimos 90 días) y posiciones actuales
+- 🎯 **Identificación de Patrones**: Detecta qué estrategia estás usando basándose en patrones de apertura, cierre y gestión de posiciones
 - 📈 **17 Indicadores Técnicos**: RSI, MACD, Bollinger Bands, ATR, Stochastic, y más
 - 🔄 **Auto-Traducción**: Convierte estrategias entre Pine Script, MQL5 y Python
-- 📊 **Backtesting**: Prueba estrategias con datos históricos reales de MT5
+- � **Optimización Inteligente**: Sugiere mejoras en parámetros sin que sepas qué estrategia usas
 - 📉 **Análisis de Riesgo**: Cálculo automático de drawdown, Sharpe ratio, win rate
-- 🎯 **Detección de Patrones**: Identifica patrones de velas japonesas automáticamente
 - 🌐 **Interfaz Moderna**: Dashboard interactivo con Next.js 14 y Tailwind CSS
 - 🔒 **Seguro**: Sin credenciales hardcodeadas, todo vía variables de entorno
 
@@ -171,47 +173,59 @@ NEXT_PUBLIC_API_BASE=http://localhost:8080
 
 ⚠️ **IMPORTANTE**: MetaTrader 5 debe estar abierto y con sesión iniciada para que funcione la conexión.
 
-### 4. Analizar Estrategia
+### 4. Detectar Tu Estrategia Automáticamente
 
-```python
-# Ejemplo: Análisis vía API
-import requests
+**NO NECESITAS SABER QUÉ ESTRATEGIA USAS** - El sistema la detecta automáticamente:
 
-strategy = """
-if RSI < 30:
-    buy()
-if RSI > 70:
-    sell()
-"""
+```bash
+# Solo llama a este endpoint:
+GET http://localhost:8080/analyze/full
 
-response = requests.post(
-    "http://localhost:8080/api/strategy/analyze",
-    json={"strategy_code": strategy}
-)
+# El sistema automáticamente:
+# ✅ Lee tu historial de trades (últimos 90 días)
+# ✅ Analiza tus posiciones actuales
+# ✅ Detecta patrones (Grid, Scalping, Trend Following, etc.)
+# ✅ Identifica el timeframe (M1, M15, H1, etc.)
+# ✅ Infiere los indicadores que usas
+# ✅ Te dice QUÉ estrategia estás usando
+# ✅ Te explica CÓMO funciona
+# ✅ Te sugiere MEJORAS
 
-print(response.json())
+# Respuesta ejemplo:
+{
+  "strategy": "Grid Scalping con Martingala",
+  "explanation": "Detectado 15 posiciones duplicadas en EURUSD. 
+                  Tu estrategia coloca órdenes en grid...",
+  "timeframe": "M1-M5",
+  "indicators": ["Bollinger Bands", "RSI", "Support/Resistance"],
+  "win_rate": 65.5,
+  "suggestions": ["Reducir grid step de 50 a 35 pips..."]
+}
 ```
 
-### 5. Traducir Estrategia
+Ver más detalles en: [DETECCION_AUTOMATICA.md](DETECCION_AUTOMATICA.md)
+
+### 5. Optimizar Tu Estrategia (Sin Saber Su Nombre)
 
 ```python
-# Pine Script → MQL5
-pine_code = """
-//@version=5
-indicator("RSI Strategy")
-rsi = ta.rsi(close, 14)
-"""
+# El sistema detecta automáticamente qué optimizar
+import requests
 
+# Solo envía tu performance actual
 response = requests.post(
-    "http://localhost:8080/api/strategy/translate",
+    "http://localhost:8080/strategy/optimize",
     json={
-        "code": pine_code,
-        "source_language": "pine_script",
-        "target_language": "mql5"
+        "strategy_name": "",  # ← DÉJALO VACÍO, se detecta automáticamente
+        "current_performance": {
+            "win_rate": 65.5,
+            "profit_factor": 1.8,
+            "max_drawdown": 500
+        }
     }
 )
 
-print(response.json()["translated_code"])
+# Recibes sugerencias de mejora automáticas
+print(response.json()["optimized_parameters"])
 ```
 
 ## 🧪 Testing

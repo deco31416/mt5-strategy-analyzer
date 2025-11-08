@@ -2,6 +2,7 @@ import MetaTrader5 as mt5
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from typing import Dict
 from strategy_templates import generate_code_and_explanation
 from database import db
 from openai_analyzer import ai_analyzer
@@ -47,19 +48,19 @@ def analyze_trades():
         "timeframe": strategy["timeframe"],
         "indicators": strategy["indicators"],
         "explanation": strategy["explanation"],
-        "account_balance": float(account_info.balance) if account_info else 0,
-        "account_equity": float(account_info.equity) if account_info else 0,
+        "account_balance": float(account_info.balance) if account_info else 0.0,
+        "account_equity": float(account_info.equity) if account_info else 0.0,
         "last_update": datetime.utcnow().isoformat(),
         
-        # Nuevos datos históricos
-        "historical_total_trades": historical_metrics.get("total_trades", 0),
-        "historical_win_rate": historical_metrics.get("win_rate", 0),
-        "historical_profit": historical_metrics.get("total_profit", 0),
-        "best_trade": historical_metrics.get("best_trade", 0),
-        "worst_trade": historical_metrics.get("worst_trade", 0),
-        "longest_win_streak": historical_metrics.get("longest_win_streak", 0),
-        "longest_loss_streak": historical_metrics.get("longest_loss_streak", 0),
-        "avg_trade_duration": historical_metrics.get("avg_duration_minutes", 0),
+        # Nuevos datos históricos (con defaults seguros)
+        "historical_total_trades": int(historical_metrics.get("total_trades", 0)),
+        "historical_win_rate": float(historical_metrics.get("win_rate", 0.0)),
+        "historical_profit": float(historical_metrics.get("total_profit", 0.0)),
+        "best_trade": float(historical_metrics.get("best_trade", 0.0)),
+        "worst_trade": float(historical_metrics.get("worst_trade", 0.0)),
+        "longest_win_streak": int(historical_metrics.get("longest_win_streak", 0)),
+        "longest_loss_streak": int(historical_metrics.get("longest_loss_streak", 0)),
+        "avg_trade_duration": float(historical_metrics.get("avg_duration_minutes", 0.0)),
         
         # Análisis por sesiones
         "best_session": session_analysis.get("best_session", "N/A"),
@@ -70,8 +71,8 @@ def analyze_trades():
         "best_day": schedule_analysis.get("best_day", "N/A"),
         
         # Gestión de riesgo
-        "avg_risk_reward": risk_analysis.get("avg_rr", 0),
-        "risk_per_trade": risk_analysis.get("avg_risk_percent", 0),
+        "avg_risk_reward": float(risk_analysis.get("avg_rr", 0.0)),
+        "risk_per_trade": float(risk_analysis.get("avg_risk_percent", 0.0)),
         
         # Por símbolos
         "best_symbol": symbol_analysis.get("best_symbol", "N/A"),

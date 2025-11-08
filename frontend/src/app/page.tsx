@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ProfitEvolutionChart from '@/components/charts/ProfitEvolutionChart'
 import StrategyExplainer from '@/components/StrategyExplainer'
+import StrategyDetectionPanel from '@/components/StrategyDetectionPanel'
 import HyperliquidReplicator from '@/components/HyperliquidReplicator'
 import HistoryPanel from '@/components/HistoryPanel'
 import AlertsPanel from '@/components/AlertsPanel'
@@ -762,6 +763,11 @@ ${implementationGuide}
                     </div>
                   </CardContent>
                 </Card>
+                </div>
+
+                {/* Strategy Detection Panel - NUEVO: Muestra cómo se determinó la estrategia */}
+                <div className="mb-6">
+                  <StrategyDetectionPanel summary={data.summary} />
                 </div>
 
                 {/* AI Analysis Card - NUEVO */}

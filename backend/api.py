@@ -8,10 +8,14 @@ from strategy_templates import generate_code_and_explanation
 from openai_analyzer import ai_analyzer
 from database import db
 from dotenv import load_dotenv
+from openai_health_check import validate_openai_or_exit
 import os
 
 # Cargar variables de entorno
 load_dotenv()
+
+# ====== VALIDAR OPENAI AL ARRANQUE ======
+openai_status = validate_openai_or_exit(allow_continue=True)
 
 app = FastAPI()
 
@@ -27,6 +31,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/health")
+def health_check():
+    """Verifica el estado del sistema incluyendo OpenAI"""
+    return {
+        "status": "ok",
+        "openai_status": openai_status,
+        "mt5_required": True,
+        "database": "strategy_data.db"
+    }
 
 @app.get("/analyze")
 def analyze_account():
@@ -58,7 +72,7 @@ def get_history(limit: int = Query(50)):
     history = db.get_analysis_history(limit)
     return {"history": history}
 
-@app.get("/history/strategy/{strategy_name}")
+@app.get("/history/strategy/{strategy_name:path}")
 def get_strategy_history(strategy_name: str):
     """Obtiene la evolución de una estrategia específica"""
     evolution = db.get_strategy_evolution(strategy_name)
@@ -146,9 +160,9 @@ def optimize_strategy(strategy_data: Dict):
 
 class OptimizationRequest(BaseModel):
     strategy_name: str
-    strategy_description: str
-    current_parameters: Dict
-    current_performance: Dict
+    strategy_description: Optional[str] = ""
+    current_parameters: Optional[Dict] = {}
+    current_performance: Optional[Dict] = {}
 
 
 @app.post("/strategy/optimize-enhanced")
