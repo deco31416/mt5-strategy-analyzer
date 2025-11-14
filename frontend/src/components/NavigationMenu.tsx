@@ -66,7 +66,7 @@ export default function NavigationMenu() {
               className="text-white font-semibold text-lg group-hover:text-accent transition-colors" 
               style={{fontFamily: "'Orbitron', sans-serif"}}
             >
-              HedgeBridge
+              MT5 Analysis
             </span>
           </Link>
 
