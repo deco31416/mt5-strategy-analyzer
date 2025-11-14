@@ -246,11 +246,11 @@ Code Generator (si codeData existe)
 
 6. **Verificar UI:**
    - ✅ Card "Strategy Detected"
-   - ✅ Card "🤖 Análisis con IA"
-   - ✅ Card "📈 Análisis Histórico (90 días)"
-   - ✅ Card "🌍 Análisis por Sesión"
-   - ✅ Card "⚖️ Gestión de Riesgo"
-   - ✅ Card "💱 Rendimiento por Símbolo"
+   - ✅ Card "Análisis con IA"
+   - ✅ Card "Análisis Histórico (90 días)"
+   - ✅ Card "Análisis por Sesión"
+   - ✅ Card "Gestión de Riesgo"
+   - ✅ Card "Rendimiento por Símbolo"
 
 ---
 

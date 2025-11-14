@@ -612,7 +612,7 @@ ${implementationGuide}
               <div className="flex items-center justify-between p-3 bg-zinc-800/50 rounded-lg border border-zinc-700 mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-zinc-300">
-                    {useBasicAnalysis ? '⚡ Análisis Rápido' : '🤖 Análisis con IA'}
+                    {useBasicAnalysis ? '⚡ Análisis Rápido' : 'Análisis con IA'}
                   </span>
                 </div>
                 <button
