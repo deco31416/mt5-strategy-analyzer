@@ -56,7 +56,7 @@ export default function NavigationMenu() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <Image 
-              src="/logo-HedgeBridge.png" 
+              src="/logo-hedgebridge.png" 
               alt="HedgeBridge" 
               width={32} 
               height={32}
