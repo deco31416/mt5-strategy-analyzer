@@ -1,21 +1,23 @@
-# 📊 MT5 Strategy Analyzer
+![deco31416](https://github.com/deco31416/deco31416/blob/main/public/31416-white.svg)
+
+# MT5 Strategy Analyzer
 
 Analizador avanzado de estrategias de trading para MetaTrader 5 con IA, análisis técnico automático y traducción de estrategias entre frameworks.
 
-## ✨ Características Principales
+## Características Principales
 
-- 🔍 **Detección Automática de Estrategia**: **NO necesitas saber qué estrategia usas** - El sistema analiza tus trades y detecta automáticamente: Grid, Scalping, Trend Following, Martingale, Hedge, etc.
-- 🤖 **Análisis con IA**: Evaluación inteligente de estrategias usando OpenAI GPT-4
-- 📊 **Análisis de Historial Completo**: Lee todos tus trades cerrados (últimos 90 días) y posiciones actuales
-- 🎯 **Identificación de Patrones**: Detecta qué estrategia estás usando basándose en patrones de apertura, cierre y gestión de posiciones
-- 📈 **17 Indicadores Técnicos**: RSI, MACD, Bollinger Bands, ATR, Stochastic, y más
-- 🔄 **Auto-Traducción**: Convierte estrategias entre Pine Script, MQL5 y Python
-- � **Optimización Inteligente**: Sugiere mejoras en parámetros sin que sepas qué estrategia usas
-- 📉 **Análisis de Riesgo**: Cálculo automático de drawdown, Sharpe ratio, win rate
-- 🌐 **Interfaz Moderna**: Dashboard interactivo con Next.js 14 y Tailwind CSS
-- 🔒 **Seguro**: Sin credenciales hardcodeadas, todo vía variables de entorno
+- **Detección Automática de Estrategia**: **NO necesitas saber qué estrategia usas** - El sistema analiza tus trades y detecta automáticamente: Grid, Scalping, Trend Following, Martingale, Hedge, etc.
+- **Análisis con IA**: Evaluación inteligente de estrategias usando OpenAI GPT-4
+- **Análisis de Historial Completo**: Lee todos tus trades cerrados (últimos 90 días) y posiciones actuales
+- **Identificación de Patrones**: Detecta qué estrategia estás usando basándose en patrones de apertura, cierre y gestión de posiciones
+- **17 Indicadores Técnicos**: RSI, MACD, Bollinger Bands, ATR, Stochastic, y más
+- **Auto-Traducción**: Convierte estrategias entre Pine Script, MQL5 y Python
+- **Optimización Inteligente**: Sugiere mejoras en parámetros sin que sepas qué estrategia usas
+- **Análisis de Riesgo**: Cálculo automático de drawdown, Sharpe ratio, win rate
+- **Interfaz Moderna**: Dashboard interactivo con Next.js 14 y Tailwind CSS
+- **Seguro**: Sin credenciales hardcodeadas, todo vía variables de entorno
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```
 mt5-strategy-analyzer/
@@ -36,7 +38,7 @@ mt5-strategy-analyzer/
 └── start.ps1           # Script de inicio automatizado
 ```
 
-## 🚀 Instalación Rápida
+## Instalación Rápida
 
 ### Prerrequisitos
 
@@ -155,7 +157,7 @@ NEXT_PUBLIC_API_BASE=http://localhost:8080
 | GET | `/api/account` | Información de cuenta |
 | GET | `/docs` | Documentación interactiva (Swagger) |
 
-## 🔧 Uso
+## Uso
 
 ### 1. Iniciar Aplicación
 
@@ -228,7 +230,7 @@ response = requests.post(
 print(response.json()["optimized_parameters"])
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Verificar Configuración
 
@@ -261,7 +263,7 @@ cd frontend
 pnpm test
 ```
 
-## 📊 Stack Tecnológico
+## Stack Tecnológico
 
 ### Backend
 - **Framework**: FastAPI 0.104+
@@ -279,7 +281,7 @@ pnpm test
 - **Charts**: Recharts
 - **Language**: TypeScript 5
 
-## 🔒 Seguridad
+## Seguridad
 
 ### ✅ Implementado
 
@@ -298,7 +300,7 @@ pnpm test
 4. Habilitar 2FA en cuentas de trading
 5. Usar cuentas demo para desarrollo
 
-### 🔍 Verificar Seguridad
+### Verificar Seguridad
 
 ```powershell
 # Buscar credenciales expuestas
@@ -308,14 +310,14 @@ git grep -i "password\|api_key\|secret"
 git status | grep .env  # Solo debe mostrar .env.example
 ```
 
-## 📚 Documentación Adicional
+## Documentación Adicional
 
 - [Backend README](backend/README.md) - Guía completa del backend
 - [Frontend README](frontend/README.md) - Guía completa del frontend
 - [SECURITY.md](backend/SECURITY.md) - Guía de seguridad
 - [API Docs](http://localhost:8080/docs) - Documentación interactiva Swagger
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Error: "MT5 not initialized"
 ```
@@ -380,13 +382,39 @@ git push origin feature/nueva-funcionalidad
 
 ## 📄 Licencia
 
-MIT License - Ver [LICENSE](LICENSE) para más detalles.
+MIT License
+
+Copyright (c) 2025 deco31416
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ## 👥 Autores
 
-Desarrollado con ❤️ para traders algorítmicos.
+Desarrollado por @deco31416 ❤️ para traders algorítmicos.
 
-## 🙏 Agradecimientos
+[www.deco31416.com](https://www.deco31416.com)
+
+**Contacto:**
+- **Email:** [contacto@deco31416.com](mailto:contacto@deco31416.com)
+- **Website:** [https://www.deco31416.com/](https://www.deco31416.com/)
+
+## Agradecimientos
 
 - MetaQuotes por MetaTrader 5 API
 - OpenAI por GPT-4 API
@@ -394,8 +422,8 @@ Desarrollado con ❤️ para traders algorítmicos.
 
 ---
 
-**⚡ Quick Start**: `.\start.ps1` → http://localhost:3000
+**Quick Start**: `.\start.ps1` → http://localhost:3000
 
-**📖 Docs**: http://localhost:8080/docs
+**Docs**: http://localhost:8080/docs
 
-**⚠️ Importante**: Asegurar MetaTrader 5 esté abierto antes de usar la aplicación.
+**Importante**: Asegurar MetaTrader 5 esté abierto antes de usar la aplicación.

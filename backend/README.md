@@ -1,3 +1,5 @@
+![deco31416](https://github.com/deco31416/deco31416/blob/main/public/31416-white.svg)
+
 # 🚀 MT5 Strategy Analyzer - Backend
 
 Backend API para análisis automático de estrategias de trading en MetaTrader 5 con integración de IA.
