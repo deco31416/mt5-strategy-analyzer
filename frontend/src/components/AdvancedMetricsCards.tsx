@@ -27,16 +27,17 @@ interface AdvancedMetricsProps {
       longest_loss_streak: number
     }
     // Análisis de sesiones
-    session_analysis?: {
+    session_analysis?: ({
       [key: string]: {
         total_profit: number
         trade_count: number
         avg_profit: number
         win_rate: number
       }
+    } & {
       best_session?: string
       worst_session?: string
-    }
+    })
     // Análisis de horario
     schedule_analysis?: {
       by_hour?: { [key: string]: any }
@@ -50,15 +51,16 @@ interface AdvancedMetricsProps {
       risk_per_trade_pct: number
     }
     // Análisis de símbolos
-    symbol_analysis?: {
+    symbol_analysis?: ({
       [key: string]: {
         total_profit: number
         trade_count: number
         win_rate: number
       }
+    } & {
       best_symbol?: string
       worst_symbol?: string
-    }
+    })
   }
   onSymbolClick?: (symbol: string) => void
 }
